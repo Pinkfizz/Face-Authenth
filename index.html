@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Face Recognition</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0f9;
+      }
+      @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        h1 {
+            animation: fadeIn 4s ease-in-out;
+        }
+      #name {
+        font-size: 4em;
+        color: #333;
+        font-weight: bolder;
+      }
+      #startButton {
+        padding: 15px 25px;
+        font-size: 2em;
+        background-color: transparent;
+        color: #0080ff;
+        border: 2px solid rgba(0, 0, 0, 0.568);
+        border-radius: 7px;
+        cursor: pointer;
+        transition: color 0.5s ease;
+        animation: fadeIn 5s ease-in-out;
+      }
+      #startButton:hover {
+        color: #004080;
+      }
+      #retryButton {
+        padding: 15px 25px;
+        font-size: 2em;
+        display: none;
+        background-color: transparent;
+        color: #0080ff;
+        border: 2px solid rgba(0, 0, 0, 0.568);
+        border-radius: 7px;
+        cursor: pointer;
+        transition: color 0.5s ease;
+        animation: fadeIn 8s ease-in-out;
+      }
+      #retryButton:hover {
+        color: #004080;
+      }
+      #loader {
+        display: none;
+        width: 1000px;
+        height: 1000px;
+      }
+    </style>
+
+
+
+    <script>
+      async function startMainScript() {
+        try {
+          document.getElementById("startButton").style.display = "none";
+          document.getElementById("loader").style.display = "block";
+          document.getElementById("header").style.display = "none";          
+
+          let response = await fetch("http://127.0.0.1:5000/start_main_script",{  method: "POST",});
+          let data = await response.json();
+          console.log("Script started:", data);
+          await fetchName();
+        } catch (error) {
+          console.error("Error starting main script:", error);
+        } finally {
+          document.getElementById("loader").style.display = "none";
+          document.getElementById("startButton").style.display = "none";
+          document.getElementById("retryButton").style.display = "block";
+        }
+      }
+
+      async function fetchName() {
+        try {
+          let response = await fetch("http://127.0.0.1:5000/get_name");
+          let data = await response.json();
+          document.getElementById("name").innerText = data.name;
+          if (data.name === 'aditi') {
+                document.getElementById('message').innerHTML = 'Welcome';
+            }
+        } catch (error) {
+          console.error("Error fetching name:", error);
+        }
+      }
+
+      function refreshPage() {
+            location.reload();
+        }
+    </script>
+
+
+
+
+  </head>
+  <body>
+
+
+    <h1 id="header">Welcome to customizable facial recognition system</h1>
+    <button id="startButton" onclick="startMainScript()">
+      Click here to start authentication
+    </button>
+
+
+
+    <img
+      id="loader"
+      src="https://i.pinimg.com/originals/ba/9a/b4/ba9ab42593e487b4e349973e1d43b11d.gif"
+      alt="Loading..."
+    />
+    <h1 id="message"></h1>
+    <h1 id="name"></h1>
+    <button id="retryButton" onclick="refreshPage()"> Retry </button>
+  </body>
+</html>
